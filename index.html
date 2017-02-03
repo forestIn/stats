@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Статистика по регионам</title>
+
+</head>
+
+<link href="css/bootstrap.min.css" rel="stylesheet"/>
+<link href="css/jumbotron.css" rel="stylesheet"/>
+<link href="css/rzslider.css" rel="stylesheet"/>
+<link href="css/custom.css" rel="stylesheet"/>
+
+</head>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+  (function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+      try {
+        w.yaCounter42435089 = new Ya.Metrika({
+          id:42435089,
+          clickmap:true,
+          trackLinks:true,
+          accurateTrackBounce:true
+        });
+      } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+    s = d.createElement("script"),
+    f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = "https://mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+      d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+  })(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/42435089" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<body ng-app='app'>
+    <div  class="container-fluid" ng-controller="LandController" ng-cloak>
+      <div class="row">
+        <div class="col-md-10">
+          <div svg-map></div>            
+        </div>    
+        <div class="col-md-2">
+          <div class="btn-group-vertical" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" ng-class="{'btn-primary': keyMap=='all_population'}" ng-click='changeValue("all_population")'>Все население</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("city_population")'  ng-class="{'btn-primary': keyMap=='city_population'}">Городское</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("country_population")'  ng-class="{'btn-primary': keyMap=='country_population'}">Сельское</button>      
+            <button type="button" class="btn btn-default" ng-click='changeValue("area")'  ng-class="{'btn-primary': keyMap=='area'}">Площадь территории, тыс. кв. км</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("density")' ng-class="{'btn-primary': keyMap=='density'}">Плотность населения</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("total_increase")' ng-class="{'btn-primary': keyMap=='total_increase'}">Общий прирост(2015)</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("total_natural_increase")' ng-class="{'btn-primary': keyMap=='total_natural_increase'}">Естественный прирост(2015)</button> 
+            <button type="button" class="btn btn-default" ng-click='changeValue("total_migration_increase")' ng-class="{'btn-primary': keyMap=='total_migration_increase'}">Миграционный прирост(2015)</button> 
+            <button type="button" class="btn btn-default" ng-click='changeValue("city_natural_increase")' ng-class="{'btn-primary': keyMap=='city_natural_increase'}">Естественный прирост город(2015)</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("city_migration_increase")' ng-class="{'btn-primary': keyMap=='city_migration_increase'}">Миграционный прирост город(2015)</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("country_natural_increase")' ng-class="{'btn-primary': keyMap=='country_natural_increase'}">Естественный прирост село(2015)</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("country_migration_increase")' ng-class="{'btn-primary': keyMap=='country_migration_increase'}">Миграционный прирост село(2015)</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("average_annual_buzy")' ng-class="{'btn-primary': keyMap=='average_annual_buzy'}">Численность занятых(тыс.ч)</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("per_capita_income")' ng-class="{'btn-primary': keyMap=='per_capita_income'}">Среднедушевые денежные доходы</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("average_consumer_rate")' ng-class="{'btn-primary': keyMap=='average_consumer_rate'}">Потребительские расходы</button>
+            <button type="button" class="btn btn-default" ng-click='changeValue("average_nominal_wage")' ng-class="{'btn-primary': keyMap=='average_nominal_wage'}">Среднемесячная начисленная зп</button>          
+          </div>    
+        </div>
+      </div>
+      <div class="row"> 
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <span> Минимальное значение {$ ownScaleParametrs[keyMap].minVal $}</span>
+            <span> Максимальное значение {$ ownScaleParametrs[keyMap].maxVal $}</span>
+          </div>
+          <div class="col-md-6 regionName">
+            <h4 class='text-left'>{$ dummyData[hoverRegion].name $} </h4>        
+          </div>
+        </div>
+      </div>
+      <div class='row'> 
+        <div class="col-md-12">
+          <div class="scale"> 
+            <h4>Шкала для разбивки по группам</h4>
+            <div ng-repeat="n in ownScaleParametrs[keyMap].scale" style="background: {$ colors[$index] $};">        
+              <span ng-if="$first"> << </span>          
+              <span ng-if="!$first"> {$ n.value $} </span>          
+              <span>  >></span>          
+            </div>                
+          </div>
+
+          <div class="scale"> 
+            <h4>Изменить значение точек</h4>
+            <div ng-repeat="n in ownScaleParametrs[keyMap].scale" style="background: {$ colors[$index] $};">
+             <span ng-if="$first"> << </span> 
+             <input class="form-control" type="number" ng-model='n.value' ng-if="!$first">        
+           </div>                
+           <button class='btn btn-primary' ng-click=changeValueScale()>Применить</button>
+
+         </div>
+         <h4>Количество точек разбивки </h4>
+         <rzslider  rz-slider-model="ownScaleParametrs[keyMap].countPoint" rz-slider-options="slider.options"></rzslider> 
+
+       </div> 
+     </div>
+
+     <div class="row">
+      <div class="col-md-12">
+
+        <p>Информация по регионам взята с сайта www.gks.ru</p>  
+        <h6>  http://www.gks.ru/free_doc/doc_2016/bul_dr/mun_obr2016.rar</h6>
+        <h6>  http://www.gks.ru/bgd/regl/b14_14p/IssWWW.exe/Stg/d02/11-10.htm  </h6>
+
+      </div>
+    </div>
+
+
+    <!-- The actual modal template, just a bit o bootstrap -->
+    <script type="text/ng-template" id="modal.html">
+     <div class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" ng-click="close('Cancel')" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">{$ region.name $}</h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+
+                <p>Все население: {$ region.region.all_population | digit $} чел.</p>
+                <p>Городское: {$ region.region.city_population | digit $} чел.</p>
+                <p>Сельское: {$ region.region.country_population | digit $} чел.</p>
+                <p>Территория: {$ region.region.area | digit $} кв км</p>
+                <p>Плотность населения: {$ region.region.density | number:1 $} чел. на кв км </p>
+
+                <p>Среднегодовая численность занятных(тыс.человек) {$ region.region.average_annual_buzy  $}</p>             
+                <p>Среднедушевые денежные доходы(в месяц, руб.) {$ region.region.per_capita_income  $}</p>
+                <p>Потребительские расходы в среднем на душу населения (в месяц) руб {$ region.region.average_consumer_rate | digit $}</p>
+                <p>Среднемесячная номинальная начисленная заработная плата работников организаций, руб.{$ region.region.average_nominal_wage | digit $}</p>
+              </div><div class="col-md-6">
+              <h5><strong>Данные по приросту за 2015 год</strong></h5>
+              <p>Общий прирост {$ region.region.total_increase | digit $} чел. </p>            
+              <p>Естественный прирост: {$ region.region.total_natural_increase | digit $} чел.</p> 
+              <p>Миграционный прирост: {$ region.region.total_migration_increase | digit $} чел. </p>
+
+              <h5><strong>Город</strong></h5>
+              <p>Естественный прирост: {$ region.region.city_natural_increase | digit $} чел. </p>
+              <p>Миграционный прирост: {$ region.region.city_migration_increase | digit $} чел.</p> 
+              <h5><strong>Село</strong></h5>
+              <p>Естественный прирост: {$ region.region.country_natural_increase | digit $} чел.</p>
+              <p>Миграционный прирост: {$ region.region.country_migration_increase | digit $} чел.</p> 
+            </div></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" ng-click="close('Yes')" class="btn btn-primary" data-dismiss="modal">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+
+
+
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js" ></script>
+    <script src="js/tether.min.js" ></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js" ></script>
+    <script src="js/ui-bootstrap-tpls-2.3.2.min.js" ></script>    
+    
+    <script src="js/angular-modal-service.min.js"></script>
+    <script src="js/rzslider.min.js"></script>
+
+    <script src="js/russia_map.js" type="text/javascript"></script>    
+    <script src="js/all.js"></script>
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+
+</body>
+</html>
